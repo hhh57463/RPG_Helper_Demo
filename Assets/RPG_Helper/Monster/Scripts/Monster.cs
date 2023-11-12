@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
+    Rigidbody rigid;
     [Tooltip("[Monster Type]\n1: In Range Move Monster\n2: Esacape Range, revert point Monster\n3: In Range Follow Monster")]
     [SerializeField] int monsterType;
     [Tooltip("[Monster Patern]\n0: Comback SpawnPoint\n1: Standing\n2: Move Random Direction\n3: Follow Player")]
@@ -15,13 +16,16 @@ public class Monster : MonoBehaviour
     Vector3 targetPos;
 
     float spawnRadius;
+    bool thinkDelay;
 
     void Start()
     {
+        rigid = GetComponent<Rigidbody>();
         spawnLocalPos = transform.localPosition;
         spawnWorldPos = transform.position;
         speed = 11.0f;
         spawnRadius = 30f;
+        thinkDelay = false;
         StartCoroutine("Thinking");
     }
 
@@ -59,8 +63,7 @@ public class Monster : MonoBehaviour
         }
 
         PaternAction();
-
-        transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, moveSpeed * Time.deltaTime);
+        rigid.velocity = (transform.position - targetPos).normalized * moveSpeed;
         if (transform.localPosition == targetPos)
             MovePos();
     }
@@ -108,9 +111,9 @@ public class Monster : MonoBehaviour
     void PatternCheck()
     {
         if (patern == 3)
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            rigid.velocity = -(transform.position - targetPos).normalized * moveSpeed;
         else
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, moveSpeed * Time.deltaTime);
+            rigid.velocity = (transform.localPosition - targetPos).normalized * moveSpeed;
         if (transform.localPosition == targetPos)
             MovePos();
     }
@@ -119,8 +122,10 @@ public class Monster : MonoBehaviour
 
     IEnumerator Thinking()
     {
+        thinkDelay = false;
         SelectPatern();
         yield return new WaitForSeconds(thinkCycle);
+        thinkDelay = true;
         StartCoroutine("Thinking");
     }
 
@@ -147,7 +152,7 @@ public class Monster : MonoBehaviour
             case 0:                                                     // Return to spawn point
                 targetPos = spawnLocalPos;
                 moveSpeed = speed;
-                if (Vector3.Distance(spawnLocalPos, transform.localPosition) >= 1.0f)
+                if (Vector3.Distance(spawnLocalPos, transform.localPosition) >= 1.0f && thinkDelay)
                     StartCoroutine("Thinking");
                 break;
             case 1:                                                     // Standing
