@@ -33,6 +33,7 @@ public class PlayerMng : MonoBehaviour
         gravity = 10.0f;
         rotSpeed = 2.0f;
         level = 1;
+        exp = 0.0f;
         maxExp = 10.0f;
         attackAccess = true;
         if (Manager.I != null)

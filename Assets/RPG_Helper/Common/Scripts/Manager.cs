@@ -40,6 +40,10 @@ public class Manager : MonoBehaviour
 
     public GameObject[] charList;
 
+    public LevelMng levelMng;
+
+    public PlayerMng playerSc;
+
     void Awake()
     {
         instance = this;
@@ -62,5 +66,11 @@ public class Manager : MonoBehaviour
     {
         vCam.Follow = playerTr;
         vCam.LookAt = playerTr;
+    }
+
+    public void LevelUp()
+    {
+        playerSc.level++;
+        levelMng.LevelUpEvent(playerSc.level);   
     }
 }

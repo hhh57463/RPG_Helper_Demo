@@ -9,8 +9,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject monsterManager;
     
     public void CharSelect(int num){
-        Instantiate(Manager.I.charList[num], GameObject.Find("Game").transform);
+        Manager.I.playerSc = Instantiate(Manager.I.charList[num], GameObject.Find("Game").transform).GetComponent<PlayerMng>();
         selectPanel.SetActive(false);
         monsterManager.SetActive(true);
+        Invoke("LevelSet", 1);
+    }
+
+    void LevelSet(){
+        Manager.I.levelMng.LevelTextSetting();
     }
 }
