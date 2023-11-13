@@ -15,8 +15,11 @@ public class PlayerMng : MonoBehaviour
     [SerializeField] float rotSpeed;
     public float attackDelay;
     public bool attackAccess;
+    public float skillCoolTime;
+    public bool skillAccess;
     float gravity;
     float viewDirX;
+    public GameObject weaponEffect;
 
     public static bool isDialog;
 
@@ -36,6 +39,7 @@ public class PlayerMng : MonoBehaviour
         exp = 0.0f;
         maxExp = 10.0f;
         attackAccess = true;
+        skillAccess = true;
         if (Manager.I != null)
         {
             Manager.I.playerName = gameObject.name;
@@ -52,7 +56,7 @@ public class PlayerMng : MonoBehaviour
         {
             Move();
             Skill();
-            if (Input.GetMouseButtonDown(0) && attackAccess){
+            if (Input.GetMouseButtonDown(0) && attackAccess && controller.isGrounded){
                 attackAccess = false;
                 basic_attack();
             }
@@ -71,20 +75,20 @@ public class PlayerMng : MonoBehaviour
             moveDir = transform.TransformDirection(moveDir);
             moveDir *= speed;
 
-            if (Input.GetButton("Jump"))
-            {
-                moveDir.y = jumpPower;
-            }
+            // if (Input.GetButton("Jump"))
+            // {
+            //     moveDir.y = jumpPower;
+            // }
         }
         transform.rotation = Quaternion.Euler(0f, viewDirX, 0f);
         moveDir.y -= gravity * Time.deltaTime;
-        controller.Move(moveDir * Time.deltaTime);
+        controller.Move(moveDir.normalized * Time.deltaTime);
         animator.SetFloat("Speed", controller.velocity.magnitude);
     }
 
     void Skill()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1) && skillAccess)
             skill_1();
         if (Input.GetKeyDown(KeyCode.Alpha2))
             skill_2();
@@ -104,9 +108,11 @@ public class PlayerMng : MonoBehaviour
     public virtual void skill_5() { }
 
     protected IEnumerator AttackDelay(){
+        weaponEffect.SetActive(true);
         yield return YieldInstructionCache.WaitForSeconds(attackDelay);
         attackAccess = true;
         speed = originSpeed;
+        weaponEffect.SetActive(false);
         animator.SetBool("Attack", !attackAccess);
     }
 }
