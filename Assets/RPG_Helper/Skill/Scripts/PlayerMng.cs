@@ -20,6 +20,7 @@ public class PlayerMng : MonoBehaviour
     float gravity;
     float viewDirX;
     public GameObject weaponEffect;
+    public bool moveAccess;
 
     public static bool isDialog;
 
@@ -40,6 +41,7 @@ public class PlayerMng : MonoBehaviour
         maxExp = 10.0f;
         attackAccess = true;
         skillAccess = true;
+        moveAccess = true;
         if (Manager.I != null)
         {
             Manager.I.playerName = gameObject.name;
@@ -52,7 +54,7 @@ public class PlayerMng : MonoBehaviour
 
     void Update()
     {
-        if (!isDialog)
+        if (!isDialog && moveAccess)
         {
             Move();
             Skill();

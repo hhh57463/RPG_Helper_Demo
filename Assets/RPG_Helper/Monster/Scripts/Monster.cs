@@ -63,7 +63,7 @@ public class Monster : MonoBehaviour
         }
 
         PaternAction();
-        rigid.velocity = (transform.position - targetPos).normalized * moveSpeed;
+        rigid.velocity = (targetPos - transform.position).normalized * moveSpeed;
         if (transform.localPosition == targetPos)
             MovePos();
     }
@@ -111,9 +111,9 @@ public class Monster : MonoBehaviour
     void PatternCheck()
     {
         if (patern == 3)
-            rigid.velocity = -(transform.position - targetPos).normalized * moveSpeed;
+            rigid.velocity = (targetPos - transform.position).normalized * moveSpeed;
         else
-            rigid.velocity = (transform.localPosition - targetPos).normalized * moveSpeed;
+            rigid.velocity = (targetPos - transform.localPosition).normalized * moveSpeed;
         if (transform.localPosition == targetPos)
             MovePos();
     }
